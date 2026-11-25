@@ -1,4 +1,3 @@
-
 name: Build Android APK
 on:
   push:
@@ -17,6 +16,8 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: android-actions/setup-android@v3
+        with:
+          accept-sdk-licenses: true
       - run: npm install
       - run: npm run build
       - run: npx cap add android
@@ -29,3 +30,4 @@ jobs:
         with:
           name: orbital-forge-3d-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          
