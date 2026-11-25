@@ -1,33 +1,69 @@
 name: Build Android APK
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
+
 jobs:
   build-apk:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
         with:
           node-version: 22
-      - uses: actions/setup-java@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
-      - uses: android-actions/setup-android@v3
-        with:
-          accept-sdk-licenses: true
-      - run: npm install
-      - run: npm run build
-      - run: npx cap add android
-      - run: npx cap sync android
-      - working-directory: android
-        run: chmod +x gradlew
-      - working-directory: android
-        run: ./gradlew assembleDebug
-      - uses: actions/upload-artifact@v4
+
+      - name: Setup Android SDK & Accept Licenses
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          if [ ! -d "$SDK_ROOT/cmdline-tools" ]; then
+            echo "Android command-line tools not found at $SDK_ROOT"
+            exit 1
+          fi
+          SDKMANAGER=$(find "$SDK_ROOT/cmdline-tools" -name sdkmanager -type f | sort -V | tail -n 1)
+          echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "$SDK_ROOT/platform-tools" >> "$GITHUB_PATH"
+          for i in $(seq 1 100); do printf 'y\n'; done | "$SDKMANAGER" --sdk_root="$SDK_ROOT" --licenses >/dev/null || true
+          "$SDKMANAGER" --sdk_root="$SDK_ROOT" "platform-tools" "platforms;android-36" "build-tools;36.0.0" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Vite web bundle
+        run: npm run build
+
+      - name: Add and sync Capacitor Android project
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -d "android" ]; then
+            npx cap add android
+          fi
+          npx cap sync android
+
+      - name: Build Android Debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
         with:
           name: orbital-forge-3d-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
           
