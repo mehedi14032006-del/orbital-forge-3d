@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#04070d" />
+  <title>ORBITAL FORGE 3D</title>
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <!-- Floating Damage / Resource Popups Layer -->
+  <div id="fx-layer"></div>
+
+  <!-- TOP TELEMETRY HUD -->
+  <header id="hud-top">
+    <div class="hud-group resources">
+      <div class="stat-pill titanium" title="Titanium Ore">
+        <span class="dot"></span>
+        <span class="label">TI</span>
+        <strong id="res-titanium">180</strong>
+      </div>
+      <div class="stat-pill plasma" title="Plasma Crystal">
+        <span class="dot"></span>
+        <span class="label">PL</span>
+        <strong id="res-plasma">60</strong>
+      </div>
+      <div class="stat-pill energy" title="Power Grid">
+        <span class="dot"></span>
+        <span class="label">MW</span>
+        <strong id="res-energy">10/10</strong>
+      </div>
+    </div>
+
+    <div class="hud-group status">
+      <div class="wave-badge">
+        <span class="wave-label">WAVE <strong id="wave-num">1</strong></span>
+        <span class="wave-timer" id="wave-timer">00:18</span>
+      </div>
+      <div class="core-bar-wrap" title="Orbital Core Integrity">
+        <div class="core-bar-fill" id="core-hp-fill"></div>
+        <span class="core-bar-text" id="core-hp-text">CORE 100%</span>
+      </div>
+    </div>
+
+    <div class="hud-group actions">
+      <button id="btn-audio" class="icon-btn" aria-label="Toggle Sound">🔊</button>
+      <button id="btn-speed" class="icon-btn" aria-label="Game Speed">1x</button>
+      <button id="btn-reset" class="icon-btn danger" aria-label="Reset Base">↺</button>
+    </div>
+  </header>
+
+  <!-- MISSION / ROCKET LAUNCH BAR -->
+  <aside id="mission-bar">
+    <div class="mission-info">
+      <span class="mission-tag">ORBITAL TIER <strong id="tier-num">1</strong></span>
+      <span class="mission-sub" id="mission-hint">Place Mining Drills on glowing veins & defend the Core</span>
+    </div>
+    <button id="btn-launch" class="launch-btn" disabled>
+      🚀 LAUNCH ROCKET <span id="launch-cost">(250 TI · 120 PL)</span>
+    </button>
+  </aside>
+
+  <!-- BOTTOM BUILD PALETTE -->
+  <nav id="build-dock">
+    <button class="build-card active" data-type="drill">
+      <span class="card-icon">⛏️</span>
+      <span class="card-name">Drill</span>
+      <span class="card-cost">40 TI</span>
+    </button>
+    <button class="build-card" data-type="relay">
+      <span class="card-icon">⚡</span>
+      <span class="card-name">Relay</span>
+      <span class="card-cost">35 TI</span>
+    </button>
+    <button class="build-card" data-type="laser">
+      <span class="card-icon">🔫</span>
+      <span class="card-name">Laser</span>
+      <span class="card-cost">60 TI · 15 PL</span>
+    </button>
+    <button class="build-card" data-type="mortar">
+      <span class="card-icon">☄️</span>
+      <span class="card-name">Mortar</span>
+      <span class="card-cost">90 TI · 40 PL</span>
+    </button>
+    <button class="build-card demolish" data-type="demolish">
+      <span class="card-icon">🗑️</span>
+      <span class="card-name">Scrap</span>
+      <span class="card-cost">+50%</span>
+    </button>
+  </nav>
+
+  <!-- TITLE OVERLAY -->
+  <div id="overlay-start" class="overlay visible">
+    <div class="modal-card">
+      <div class="badge">PLAY STORE EDITION · v1.0</div>
+      <h1>ORBITAL FORGE <span>3D</span></h1>
+      <p>Establish an automated planetary mining colony, power laser & plasma defense grids, and launch orbital supply rockets under relentless meteor & drone waves.</p>
+      <ul class="quick-guide">
+        <li><strong>Tap Grid</strong> to place Drills on glowing Ore Veins & build Turrets</li>
+        <li><strong>Drag / Pinch</strong> to orbit & zoom the 3D planetoid camera</li>
+        <li><strong>Auto-Links</strong> route energy & ore streams to your Core</li>
+      </ul>
+      <button id="btn-play" class="primary-btn">DEPLOY TO ORBIT</button>
+    </div>
+  </div>
+
+  <!-- GAME OVER OVERLAY -->
+  <div id="overlay-gameover" class="overlay">
+    <div class="modal-card">
+      <div class="badge danger">CORE BREACHED</div>
+      <h2>COLONY LOST</h2>
+      <p id="gameover-stats">Survived 0 waves · Launched 0 orbital rockets.</p>
+      <button id="btn-retry" class="primary-btn">REBUILD COLONY</button>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

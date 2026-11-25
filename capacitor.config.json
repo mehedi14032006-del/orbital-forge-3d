@@ -1,0 +1,10 @@
+{
+  "appId": "com.orbitalforge.game",
+  "appName": "Orbital Forge 3D",
+  "webDir": "dist",
+  "backgroundColor": "#04070d",
+  "android": {
+    "backgroundColor": "#04070d",
+    "allowMixedContent": false
+  }
+}
